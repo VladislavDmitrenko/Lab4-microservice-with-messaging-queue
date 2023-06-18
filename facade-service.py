@@ -1,15 +1,16 @@
+from flask import Flask, request
 from hazelcast import HazelcastClient
 
-# Подключение к кластеру Hazelcast
+app = Flask(__name__)
 client = HazelcastClient()
 
-# Получение распределенной очереди
-message_queue = client.get_queue("messageQueue")
+queue = client.get_queue("messages_queue")
 
-# Отправка сообщений в очередь
-message_queue.put("msg1")
-message_queue.put("msg2")
-message_queue.put("msg3")
+@app.route('/', methods=['POST'])
+def publish_message():
+    message = request.data.decode("utf-8")
+    queue.put(message)
+    return "Message published to the queue"
 
-# Закрытие подключения к кластеру Hazelcast
-client.shutdown()
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

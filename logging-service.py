@@ -6,4 +6,4 @@ queue = client.get_queue("messages_queue")
 
 while True:
     message = queue.take().result()
-    print("Received message:", message)
+    print("Logging message:", message)
